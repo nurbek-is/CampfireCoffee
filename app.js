@@ -50,12 +50,13 @@ hourlySales: function () {
   this.packageLbsPerHour.push(packageLbsPerHour); ///  there is some bug in these lines
   this.hrlyPound+=packageLbsPerHour;
   }
+  //this.packageLbsPerHour=Math.round(this.packageLbsPerHour);
   this.totalCupSales = Math.round(this.totalCupSales);
 },
 //this calculates Total Coffee Pound sale per hour
 getTotalPoundSalePerHour: function () {
   for (hour in this.hrsOpen) {
-    var totalHrlyPounds = (this.packageLbsPerHour[hour] + this.cupsPerPound [hour]);
+    var totalHrlyPounds = Math.round (Math.round ((this.packageLbsPerHour[hour] + this.cupsPerPound [hour])*10)/10*10)/10;
     this.totalPoundsPerHr.push (totalHrlyPounds);   ///  there is some bug in these lines
     this.dailyPoundSale+=totalHrlyPounds;
   }
@@ -168,7 +169,7 @@ hourlySales: function () {
 //this calculates Total Coffee Pound sale per hour
 getTotalPoundSalePerHour: function () {
   for (hour in this.hrsOpen) {
-    var totalHrlyPounds = (this.packageLbsPerHour[hour] + this.cupsPerPound [hour]);
+    var totalHrlyPounds = Math.round (Math.round ((this.packageLbsPerHour[hour] + this.cupsPerPound [hour])*10)/10*10)/10;
     this.totalPoundsPerHr.push (totalHrlyPounds);   ///  there is some bug in these lines
     this.dailyPoundSale+=totalHrlyPounds;
   }
@@ -284,7 +285,7 @@ hourlySales: function () {
 //this calculates Total Coffee Pound sale per hour
 getTotalPoundSalePerHour: function () {
   for (hour in this.hrsOpen) {
-    var totalHrlyPounds = (this.packageLbsPerHour[hour] + this.cupsPerPound [hour]);
+    var totalHrlyPounds = Math.round ((this.packageLbsPerHour[hour] + this.cupsPerPound [hour])*10)/10;
     this.totalPoundsPerHr.push (totalHrlyPounds);   ///  there is some bug in these lines
     this.dailyPoundSale+=totalHrlyPounds;
   }
@@ -398,7 +399,7 @@ hourlySales: function () {
 //this calculates Total Coffee Pound sale per hour
 getTotalPoundSalePerHour: function () {
   for (hour in this.hrsOpen) {
-    var totalHrlyPounds = (this.packageLbsPerHour[hour] + this.cupsPerPound [hour]);
+    var totalHrlyPounds = Math.round ((this.packageLbsPerHour[hour] + this.cupsPerPound [hour])*10)/10;
     this.totalPoundsPerHr.push (totalHrlyPounds);   ///  there is some bug in these lines
     this.dailyPoundSale+=totalHrlyPounds;
   }
@@ -511,7 +512,7 @@ hourlySales: function () {
 //this calculates Total Coffee Pound sale per hour
 getTotalPoundSalePerHour: function () {
   for (hour in this.hrsOpen) {
-    var totalHrlyPounds = (this.packageLbsPerHour[hour] + this.cupsPerPound [hour]);
+    var totalHrlyPounds = Math.round ((this.packageLbsPerHour[hour] + this.cupsPerPound [hour])*10)/10;
     this.totalPoundsPerHr.push (totalHrlyPounds);   ///  there is some bug in these lines
     this.dailyPoundSale+=totalHrlyPounds;
   }
