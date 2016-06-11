@@ -19,7 +19,6 @@ var pikePlace = {
   totalPoundsPerHr:[],
   cupsPerPound:[],
 
-
   // This generates a random number of customers between min and max
 
   getRandom: function(min, max) {
@@ -28,7 +27,7 @@ var pikePlace = {
 // This calculates average customers per hour
   averageCustomerPerHour: function () {
     for (cust in this.hrsOpen)     {
-      var myCustomers= Math.floor(this.getRandom(this.min, this.max));
+      var myCustomers= Math.round(this.getRandom(this.min, this.max)*10)/10;
       this.hourlyCust.push (myCustomers);
 
       this.totalCustomers+= this.hourlyCust[cust];
@@ -37,11 +36,13 @@ var pikePlace = {
 // This calculates coffee cupSalePerHr per hours
 hourlySales: function () {
   for (hour in this.hourlyCust)    /* same as (i=0; i < this.hrsOpen.length; i++)*/ {
-  var cupSalePerHr=Math.round(this.hourlyCust[hour] * this.average);
+  var cupSalePerHr=Math.round((this.hourlyCust[hour] * this.average)*10)/10;
+  //console.log (cupSalePerHr);
   this.cupSalePerHr.push(cupSalePerHr);
   this.totalCupSales+= this.cupSalePerHr[hour]; /*same as (this.totalCupSales +=this.cupSalePerHr[i];) */
+
   // this calculates  total pounds in terms of cups
-  cupsInPounds = (Math.round((this.cupSalePerHr[hour])/16)*10)/10;
+  var cupsInPounds = Math.round((this.cupSalePerHr[hour]/16)*10)/10;
   this.cupsPerPound.push (cupsInPounds);
 
   // this calculates to Go Pound sale per hour
@@ -49,15 +50,18 @@ hourlySales: function () {
   this.packageLbsPerHour.push(packageLbsPerHour); ///  there is some bug in these lines
   this.hrlyPound+=packageLbsPerHour;
   }
+  this.totalCupSales = Math.round(this.totalCupSales);
 },
 //this calculates Total Coffee Pound sale per hour
 getTotalPoundSalePerHour: function () {
   for (hour in this.hrsOpen) {
-  var totalHrlyPounds= Math.floor (this.packageLbsPerHour[hour] + this.cupsPerPound [hour]);
-  this.totalPoundsPerHr.push (totalHrlyPounds);   ///  there is some bug in these lines
-  this.dailyPoundSale+=totalHrlyPounds;
+    var totalHrlyPounds = (this.packageLbsPerHour[hour] + this.cupsPerPound [hour]);
+    this.totalPoundsPerHr.push (totalHrlyPounds);   ///  there is some bug in these lines
+    this.dailyPoundSale+=totalHrlyPounds;
   }
+   this.dailyPoundSale = Math.round(this.dailyPoundSale)
 },
+
 getEmployeesPerHour:  function() {
     for (idx in this.hrsOpen) {
       var employees = Math.ceil(this.hourlyCust[idx] / 30);
@@ -108,13 +112,13 @@ sectionEl.appendChild(ulEl)
 }
 pikePlace.render();
 
-var capitolHill = {
+var capitolHillSales = {
   hrsOpen: ["6 am", "7 am", "8 am","9 am","10 am", "11 am", "12 pm", "1 pm", "2 pm", "3 pm", "4 pm", "5 pm", "6 pm", "7 pm", "8 pm"],
   name: "Capitol Hill",
-  min:12,
-  max:28,
-  average:3.2,
-  toGoPound: .03,
+  min:14,
+  max:35,
+  average:1.2,
+  toGoPound: .34,
 
   totalCupSales: 0,
   totalCustomers:0,
@@ -128,7 +132,6 @@ var capitolHill = {
   totalPoundsPerHr:[],
   cupsPerPound:[],
 
-
   // This generates a random number of customers between min and max
 
   getRandom: function(min, max) {
@@ -137,7 +140,7 @@ var capitolHill = {
 // This calculates average customers per hour
   averageCustomerPerHour: function () {
     for (cust in this.hrsOpen)     {
-      var myCustomers= Math.floor(this.getRandom(this.min, this.max));
+      var myCustomers= Math.round(this.getRandom(this.min, this.max)*10)/10;
       this.hourlyCust.push (myCustomers);
 
       this.totalCustomers+= this.hourlyCust[cust];
@@ -146,11 +149,13 @@ var capitolHill = {
 // This calculates coffee cupSalePerHr per hours
 hourlySales: function () {
   for (hour in this.hourlyCust)    /* same as (i=0; i < this.hrsOpen.length; i++)*/ {
-  var cupSalePerHr=Math.round(this.hourlyCust[hour] * this.average);
+  var cupSalePerHr=Math.round((this.hourlyCust[hour] * this.average)*10)/10;
+  //console.log (cupSalePerHr);
   this.cupSalePerHr.push(cupSalePerHr);
   this.totalCupSales+= this.cupSalePerHr[hour]; /*same as (this.totalCupSales +=this.cupSalePerHr[i];) */
+
   // this calculates  total pounds in terms of cups
-  cupsInPounds = (Math.round((this.cupSalePerHr[hour])/16)*10)/10;
+  var cupsInPounds = Math.round((this.cupSalePerHr[hour]/16)*10)/10;
   this.cupsPerPound.push (cupsInPounds);
 
   // this calculates to Go Pound sale per hour
@@ -158,15 +163,18 @@ hourlySales: function () {
   this.packageLbsPerHour.push(packageLbsPerHour); ///  there is some bug in these lines
   this.hrlyPound+=packageLbsPerHour;
   }
+  this.totalCupSales = Math.round(this.totalCupSales);
 },
 //this calculates Total Coffee Pound sale per hour
 getTotalPoundSalePerHour: function () {
   for (hour in this.hrsOpen) {
-  var totalHrlyPounds= Math.floor (this.packageLbsPerHour[hour] + this.cupsPerPound [hour]);
-  this.totalPoundsPerHr.push (totalHrlyPounds);   ///  there is some bug in these lines
-  this.dailyPoundSale+=totalHrlyPounds;
+    var totalHrlyPounds = (this.packageLbsPerHour[hour] + this.cupsPerPound [hour]);
+    this.totalPoundsPerHr.push (totalHrlyPounds);   ///  there is some bug in these lines
+    this.dailyPoundSale+=totalHrlyPounds;
   }
+   this.dailyPoundSale = Math.round(this.dailyPoundSale)
 },
+
 getEmployeesPerHour:  function() {
     for (idx in this.hrsOpen) {
       var employees = Math.ceil(this.hourlyCust[idx] / 30);
@@ -215,17 +223,18 @@ sectionEl.appendChild(ulEl)
 
 }
 }
-capitolHill.render();
+capitolHillSales.render();
 
 /////////////////////
 
-var seattlePublicLibrary = {
+
+var seattlePublicLibrarySales = {
   hrsOpen: ["6 am", "7 am", "8 am","9 am","10 am", "11 am", "12 pm", "1 pm", "2 pm", "3 pm", "4 pm", "5 pm", "6 pm", "7 pm", "8 pm"],
   name: "Seattle Public Library",
-  min:9,
-  max:45,
-  average:2.6,
-  toGoPound: .02,
+  min:14,
+  max:35,
+  average:1.2,
+  toGoPound: .34,
 
   totalCupSales: 0,
   totalCustomers:0,
@@ -239,7 +248,6 @@ var seattlePublicLibrary = {
   totalPoundsPerHr:[],
   cupsPerPound:[],
 
-
   // This generates a random number of customers between min and max
 
   getRandom: function(min, max) {
@@ -248,7 +256,7 @@ var seattlePublicLibrary = {
 // This calculates average customers per hour
   averageCustomerPerHour: function () {
     for (cust in this.hrsOpen)     {
-      var myCustomers= Math.floor(this.getRandom(this.min, this.max));
+      var myCustomers= Math.round(this.getRandom(this.min, this.max)*10)/10;
       this.hourlyCust.push (myCustomers);
 
       this.totalCustomers+= this.hourlyCust[cust];
@@ -257,11 +265,13 @@ var seattlePublicLibrary = {
 // This calculates coffee cupSalePerHr per hours
 hourlySales: function () {
   for (hour in this.hourlyCust)    /* same as (i=0; i < this.hrsOpen.length; i++)*/ {
-  var cupSalePerHr=Math.round(this.hourlyCust[hour] * this.average);
+  var cupSalePerHr=Math.round((this.hourlyCust[hour] * this.average)*10)/10;
+  //console.log (cupSalePerHr);
   this.cupSalePerHr.push(cupSalePerHr);
   this.totalCupSales+= this.cupSalePerHr[hour]; /*same as (this.totalCupSales +=this.cupSalePerHr[i];) */
+
   // this calculates  total pounds in terms of cups
-  cupsInPounds = (Math.round((this.cupSalePerHr[hour])/16)*10)/10;
+  var cupsInPounds = Math.round((this.cupSalePerHr[hour]/16)*10)/10;
   this.cupsPerPound.push (cupsInPounds);
 
   // this calculates to Go Pound sale per hour
@@ -269,15 +279,18 @@ hourlySales: function () {
   this.packageLbsPerHour.push(packageLbsPerHour); ///  there is some bug in these lines
   this.hrlyPound+=packageLbsPerHour;
   }
+  this.totalCupSales = Math.round(this.totalCupSales);
 },
 //this calculates Total Coffee Pound sale per hour
 getTotalPoundSalePerHour: function () {
   for (hour in this.hrsOpen) {
-  var totalHrlyPounds= Math.floor (this.packageLbsPerHour[hour] + this.cupsPerPound [hour]);
-  this.totalPoundsPerHr.push (totalHrlyPounds);   ///  there is some bug in these lines
-  this.dailyPoundSale+=totalHrlyPounds;
+    var totalHrlyPounds = (this.packageLbsPerHour[hour] + this.cupsPerPound [hour]);
+    this.totalPoundsPerHr.push (totalHrlyPounds);   ///  there is some bug in these lines
+    this.dailyPoundSale+=totalHrlyPounds;
   }
+   this.dailyPoundSale = Math.round(this.dailyPoundSale)
 },
+
 getEmployeesPerHour:  function() {
     for (idx in this.hrsOpen) {
       var employees = Math.ceil(this.hourlyCust[idx] / 30);
@@ -326,17 +339,16 @@ sectionEl.appendChild(ulEl)
 
 }
 }
-seattlePublicLibrary.render();
-
+seattlePublicLibrarySales.render();
 /////////////////
 
-var southLakeUnion = {
+var southLakeUnionSales = {
   hrsOpen: ["6 am", "7 am", "8 am","9 am","10 am", "11 am", "12 pm", "1 pm", "2 pm", "3 pm", "4 pm", "5 pm", "6 pm", "7 pm", "8 pm"],
   name: "South Lake Union",
-  min:5,
-  max:18,
-  average:1.3,
-  toGoPound: .04,
+  min:14,
+  max:35,
+  average:1.2,
+  toGoPound: .34,
 
   totalCupSales: 0,
   totalCustomers:0,
@@ -350,7 +362,6 @@ var southLakeUnion = {
   totalPoundsPerHr:[],
   cupsPerPound:[],
 
-
   // This generates a random number of customers between min and max
 
   getRandom: function(min, max) {
@@ -359,7 +370,7 @@ var southLakeUnion = {
 // This calculates average customers per hour
   averageCustomerPerHour: function () {
     for (cust in this.hrsOpen)     {
-      var myCustomers= Math.floor(this.getRandom(this.min, this.max));
+      var myCustomers= Math.round(this.getRandom(this.min, this.max)*10)/10;
       this.hourlyCust.push (myCustomers);
 
       this.totalCustomers+= this.hourlyCust[cust];
@@ -368,11 +379,13 @@ var southLakeUnion = {
 // This calculates coffee cupSalePerHr per hours
 hourlySales: function () {
   for (hour in this.hourlyCust)    /* same as (i=0; i < this.hrsOpen.length; i++)*/ {
-  var cupSalePerHr=Math.round(this.hourlyCust[hour] * this.average);
+  var cupSalePerHr=Math.round((this.hourlyCust[hour] * this.average)*10)/10;
+  //console.log (cupSalePerHr);
   this.cupSalePerHr.push(cupSalePerHr);
   this.totalCupSales+= this.cupSalePerHr[hour]; /*same as (this.totalCupSales +=this.cupSalePerHr[i];) */
+
   // this calculates  total pounds in terms of cups
-  cupsInPounds = (Math.round((this.cupSalePerHr[hour])/16)*10)/10;
+  var cupsInPounds = Math.round((this.cupSalePerHr[hour]/16)*10)/10;
   this.cupsPerPound.push (cupsInPounds);
 
   // this calculates to Go Pound sale per hour
@@ -380,15 +393,18 @@ hourlySales: function () {
   this.packageLbsPerHour.push(packageLbsPerHour); ///  there is some bug in these lines
   this.hrlyPound+=packageLbsPerHour;
   }
+  this.totalCupSales = Math.round(this.totalCupSales);
 },
 //this calculates Total Coffee Pound sale per hour
 getTotalPoundSalePerHour: function () {
   for (hour in this.hrsOpen) {
-  var totalHrlyPounds= Math.floor (this.packageLbsPerHour[hour] + this.cupsPerPound [hour]);
-  this.totalPoundsPerHr.push (totalHrlyPounds);   ///  there is some bug in these lines
-  this.dailyPoundSale+=totalHrlyPounds;
+    var totalHrlyPounds = (this.packageLbsPerHour[hour] + this.cupsPerPound [hour]);
+    this.totalPoundsPerHr.push (totalHrlyPounds);   ///  there is some bug in these lines
+    this.dailyPoundSale+=totalHrlyPounds;
   }
+   this.dailyPoundSale = Math.round(this.dailyPoundSale)
 },
+
 getEmployeesPerHour:  function() {
     for (idx in this.hrsOpen) {
       var employees = Math.ceil(this.hourlyCust[idx] / 30);
@@ -416,38 +432,36 @@ for (hour in this.hrsOpen) {
 // this creates and li for totalCupSales and appends it to the ul created above
 //then appends it to the existing section withing our HTML.
 liEl = document.createElement('li');
-liEl.textContent = 'Total customers at South Lake Union Market: ' + this.totalCustomers
+liEl.textContent = 'Total customers at South Lake Union Market Sales: ' + this.totalCustomers
 ulEl.appendChild (liEl);
 sectionEl.appendChild(ulEl)
 
 liEl = document.createElement('li');
-liEl.textContent = "Total cups sold at South Lake Union Market: " + this.totalCupSales;   //' Employee needed :' + this.employeeRequired;
+liEl.textContent = "Total cups sold at South Lake Union Market Sales: " + this.totalCupSales;   //' Employee needed :' + this.employeeRequired;
 ulEl.appendChild (liEl);
 sectionEl.appendChild(ulEl)
 
 liEl = document.createElement('li');
-liEl.textContent = 'Total to-go pound packages sold at South Lake Union Market: ' + this.hrlyPound
+liEl.textContent = 'Total to-go pound packages sold at South Lake Union Market Sales: ' + this.hrlyPound
 ulEl.appendChild (liEl);
 sectionEl.appendChild(ulEl)
 
 liEl = document.createElement('li');
-liEl.textContent = 'Total pounds of beans needed at South Lake Union Market: ' + this.dailyPoundSale
+liEl.textContent = 'Total pounds of beans needed at South Lake Union Market Sales: ' + this.dailyPoundSale
 ulEl.appendChild (liEl);
 sectionEl.appendChild(ulEl)
 
 }
 }
-southLakeUnion.render();
+southLakeUnionSales.render();
 
-/////////////////
-
-var seaTacAirport = {
+var seaTacAirportSales = {
   hrsOpen: ["6 am", "7 am", "8 am","9 am","10 am", "11 am", "12 pm", "1 pm", "2 pm", "3 pm", "4 pm", "5 pm", "6 pm", "7 pm", "8 pm"],
-  name: "Sea-Tac Airport",
-  min:28,
-  max:44,
-  average:1.1,
-  toGoPound: .41,
+  name: "SeaTac Airport",
+  min:14,
+  max:35,
+  average:1.2,
+  toGoPound: .34,
 
   totalCupSales: 0,
   totalCustomers:0,
@@ -461,7 +475,6 @@ var seaTacAirport = {
   totalPoundsPerHr:[],
   cupsPerPound:[],
 
-
   // This generates a random number of customers between min and max
 
   getRandom: function(min, max) {
@@ -470,7 +483,7 @@ var seaTacAirport = {
 // This calculates average customers per hour
   averageCustomerPerHour: function () {
     for (cust in this.hrsOpen)     {
-      var myCustomers= Math.floor(this.getRandom(this.min, this.max));
+      var myCustomers= Math.round(this.getRandom(this.min, this.max)*10)/10;
       this.hourlyCust.push (myCustomers);
 
       this.totalCustomers+= this.hourlyCust[cust];
@@ -479,11 +492,13 @@ var seaTacAirport = {
 // This calculates coffee cupSalePerHr per hours
 hourlySales: function () {
   for (hour in this.hourlyCust)    /* same as (i=0; i < this.hrsOpen.length; i++)*/ {
-  var cupSalePerHr=Math.round(this.hourlyCust[hour] * this.average);
+  var cupSalePerHr=Math.round((this.hourlyCust[hour] * this.average)*10)/10;
+  //console.log (cupSalePerHr);
   this.cupSalePerHr.push(cupSalePerHr);
   this.totalCupSales+= this.cupSalePerHr[hour]; /*same as (this.totalCupSales +=this.cupSalePerHr[i];) */
+
   // this calculates  total pounds in terms of cups
-  cupsInPounds = (Math.round((this.cupSalePerHr[hour])/16)*10)/10;
+  var cupsInPounds = Math.round((this.cupSalePerHr[hour]/16)*10)/10;
   this.cupsPerPound.push (cupsInPounds);
 
   // this calculates to Go Pound sale per hour
@@ -491,15 +506,18 @@ hourlySales: function () {
   this.packageLbsPerHour.push(packageLbsPerHour); ///  there is some bug in these lines
   this.hrlyPound+=packageLbsPerHour;
   }
+  this.totalCupSales = Math.round(this.totalCupSales);
 },
 //this calculates Total Coffee Pound sale per hour
 getTotalPoundSalePerHour: function () {
   for (hour in this.hrsOpen) {
-  var totalHrlyPounds= Math.floor (this.packageLbsPerHour[hour] + this.cupsPerPound [hour]);
-  this.totalPoundsPerHr.push (totalHrlyPounds);   ///  there is some bug in these lines
-  this.dailyPoundSale+=totalHrlyPounds;
+    var totalHrlyPounds = (this.packageLbsPerHour[hour] + this.cupsPerPound [hour]);
+    this.totalPoundsPerHr.push (totalHrlyPounds);   ///  there is some bug in these lines
+    this.dailyPoundSale+=totalHrlyPounds;
   }
+   this.dailyPoundSale = Math.round(this.dailyPoundSale)
 },
+
 getEmployeesPerHour:  function() {
     for (idx in this.hrsOpen) {
       var employees = Math.ceil(this.hourlyCust[idx] / 30);
@@ -527,25 +545,25 @@ for (hour in this.hrsOpen) {
 // this creates and li for totalCupSales and appends it to the ul created above
 //then appends it to the existing section withing our HTML.
 liEl = document.createElement('li');
-liEl.textContent = 'Total customers at Sea-Tac Airport Market: ' + this.totalCustomers
+liEl.textContent = 'Total customers at SeaTac Airport Market Sales: ' + this.totalCustomers
 ulEl.appendChild (liEl);
 sectionEl.appendChild(ulEl)
 
 liEl = document.createElement('li');
-liEl.textContent = "Total cups sold at Sea-Tac Airport Market: " + this.totalCupSales;   //' Employee needed :' + this.employeeRequired;
+liEl.textContent = "Total cups sold at SeaTac Airport Market Sales: " + this.totalCupSales;   //' Employee needed :' + this.employeeRequired;
 ulEl.appendChild (liEl);
 sectionEl.appendChild(ulEl)
 
 liEl = document.createElement('li');
-liEl.textContent = 'Total to-go pound packages sold at Sea-Tac Airport Market: ' + this.hrlyPound
+liEl.textContent = 'Total to-go pound packages sold at SeaTac Airport Market Sales: ' + this.hrlyPound
 ulEl.appendChild (liEl);
 sectionEl.appendChild(ulEl)
 
 liEl = document.createElement('li');
-liEl.textContent = 'Total pounds of beans needed at Sea-Tac Airport Market: ' + this.dailyPoundSale
+liEl.textContent = 'Total pounds of beans needed at SeaTac Airport Market Sales: ' + this.dailyPoundSale
 ulEl.appendChild (liEl);
 sectionEl.appendChild(ulEl)
 
 }
 }
-seaTacAirport.render();
+seaTacAirportSales.render();
