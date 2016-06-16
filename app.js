@@ -1,42 +1,48 @@
+var hrsOpen = ["6 am", "7 am", "8 am","9 am","10 am", "11 am", "12 pm", "1 pm", "2 pm", "3 pm", "4 pm", "5 pm", "6 pm", "7 pm", "8 pm"];
+var allShops = [];
+var allShopsDailyLbs = 0;
+var allShopsHourlyLbs = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+var allShopsHourlyEmploy = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+var allShopsDailyEmployee = 0;
 
-var pikePlace = {
-  hrsOpen: ["6 am", "7 am", "8 am","9 am","10 am", "11 am", "12 pm", "1 pm", "2 pm", "3 pm", "4 pm", "5 pm", "6 pm", "7 pm", "8 pm"],
-  name: "Pike Place",
-  min:14,
-  max:35,
-  average:1.2,
-  toGoPound: .34,
 
-  totalCupSales: 0,
-  totalCustomers:0,
-  hrlyPound:0,
-  dailyPoundSale:0,
 
-  cupSalePerHr:[],
-  hourlyCust: [],
-  packageLbsPerHour:[],
-  employeeRequired:[],
-  totalPoundsPerHr:[],
-  cupsPerPound:[],
+function Shop (min, max, name,average,toGoPound) {
+ this.min = min;
+ this.max = max;
+ this.name = name;
+ this.average = average;
+ this.toGoPound = toGoPound;
+ //this.hours = hours;
+ this.totalCupSales = 0;
+ this.totalCustomers = 0;
+ this.hrlyPound = 0;
+ this.dailyPoundSale = 0;
+ this.dailyEmployeePerShop = 0;
+ this.cupSalePerHr =[];
+ this.hourlyCust = [];
+ this.packageLbsPerHour =[];
+ this.employeeRequired =[];
+ this.totalPoundsPerHr =[];
+ this.cupsPerPound =[];
+ allShops.push (this);
+}
 
-  // This generates a random number of customers between min and max
-
-  getRandom: function(min, max) {
+Shop.prototype.getRandom = function(min, max) {
   return(Math.floor(Math.random() * (max - min + 1)) + min);
-},
-// This calculates average customers per hour
-  averageCustomerPerHour: function () {
-    for (cust in this.hrsOpen)     {
+}
+
+Shop.prototype.averageCustomerPerHour = function () {
+    for (cust in hrsOpen)     {
       var myCustomers= Math.round(this.getRandom(this.min, this.max)*10)/10;
       this.hourlyCust.push (myCustomers);
-
       this.totalCustomers+= this.hourlyCust[cust];
   }
-},
-// This calculates coffee cupSalePerHr per hours
-hourlySales: function () {
-  for (hour in this.hourlyCust)    /* same as (i=0; i < this.hrsOpen.length; i++)*/ {
-  var cupSalePerHr=Math.round((this.hourlyCust[hour] * this.average)*10)/10;
+};
+//This calculates coffee cupSalePerHr per hours
+Shop.prototype.hourlySales = function () {
+  for (hour in this.hourlyCust)    {
+  var cupSalePerHr = Math.round((this.hourlyCust[hour] * this.average)*10)/10;
   //console.log (cupSalePerHr);
   this.cupSalePerHr.push(cupSalePerHr);
   this.totalCupSales+= this.cupSalePerHr[hour]; /*same as (this.totalCupSales +=this.cupSalePerHr[i];) */
@@ -52,519 +58,190 @@ hourlySales: function () {
   }
   //this.packageLbsPerHour=Math.round(this.packageLbsPerHour);
   this.totalCupSales = Math.round(this.totalCupSales);
-},
+};
 //this calculates Total Coffee Pound sale per hour
-getTotalPoundSalePerHour: function () {
-  for (hour in this.hrsOpen) {
-    var totalHrlyPounds = Math.round (Math.round ((this.packageLbsPerHour[hour] + this.cupsPerPound [hour])*10)/10*10)/10;
-    this.totalPoundsPerHr.push (totalHrlyPounds);   ///  there is some bug in these lines
+Shop.prototype.getTotalPoundSalePerHour = function () {
+  for (idx in hrsOpen) {
+    var totalHrlyPounds = Math.round (((this.packageLbsPerHour[idx] + this.cupsPerPound [idx])*10)/10);
+    this.totalPoundsPerHr.push (totalHrlyPounds);
     this.dailyPoundSale+=totalHrlyPounds;
+    allShopsHourlyLbs[idx]+=totalHrlyPounds;
   }
-   this.dailyPoundSale = Math.round(this.dailyPoundSale)
-},
+    this.dailyPoundSale = Math.round(this.dailyPoundSale)
+    allShopsDailyLbs+=this.dailyPoundSale;
+};
 
-getEmployeesPerHour:  function() {
-    for (idx in this.hrsOpen) {
-      var employees = Math.ceil(this.hourlyCust[idx] / 30);
-      this.employeeRequired.push(employees);
+Shop.prototype.getEmployeesPerHour = function() {
+  for (hour in hrsOpen) {
+    var hourlyEmployees = Math.ceil(this.hourlyCust[hour] / 30);
+    this.employeeRequired.push(hourlyEmployees);
+    this.dailyEmployeePerShop+=hourlyEmployees;
+    allShopsHourlyEmploy[hour]+=hourlyEmployees;
+    allShopsDailyEmployee+=hourlyEmployees;
+    console.log (allShopsDailyEmployee)
     }
-  },
+  };
 
-//This prints the lists to the page
-render: function () {
+Shop.prototype.doAllTheMethods = function() {
   this.averageCustomerPerHour ();
-  this.hourlySales ();
+  this.hourlySales();
   this.getTotalPoundSalePerHour ();
   this.getEmployeesPerHour ();
-  var sectionEl = document.getElementById('pikePlaceSales');
-  sectionEl.textContent = this.name;
-  var ulEl = document.createElement ('ul');
+};
 
-// this creates li for each this.hrsOpen and appends it to the ul we created above
-for (hour in this.hrsOpen) {
-  var liEl = document.createElement ('li');
-  liEl.textContent = this.hrsOpen [hour] + ": " + this.totalPoundsPerHr [hour] + ' lbs [' + this.hourlyCust [hour] + ' customers, ' + this.cupSalePerHr[hour] +
-  ' cups'+ " ( " + this.cupsPerPound [hour] + " lbs), " + this.packageLbsPerHour [hour] +  " lbs to-go]";
-  ulEl.appendChild (liEl);
+var pikePlace = new Shop (14, 35, "Pike Place",1.2, .34);
+var capitolHill = new Shop (12, 28, "Capitol Hill",3.2, .03);
+var seattlePublicLibrary = new Shop (9, 45, 'Seattle Public Library',2.6, .02);
+var southLakeUnion = new Shop (5, 18, 'South Lake Union', 1.3, .04);
+var seaTacAirport = new Shop (28, 44, 'Sea-Tac Airport', 1.1, .41);
+
+ pikePlace.doAllTheMethods ();
+ capitolHill.doAllTheMethods ();
+ seattlePublicLibrary.doAllTheMethods ();
+ southLakeUnion.doAllTheMethods ();
+ seaTacAirport.doAllTheMethods ();
+
+//////////////////////////////
+// create h1 tag for a table  main
+
+
+function createTableTitle(toppart, id) {
+  var center = document.getElementById(id);
+  var trHeader = document.createElement('h1');
+  trHeader.textContent = toppart;
+  center.appendChild(trHeader);
 }
-// this creates and li for totalCupSales and appends it to the ul created above
-//then appends it to the existing section withing our HTML.
-liEl = document.createElement('li');
-liEl.textContent = 'Total customers at Pike Place Market: ' + this.totalCustomers
-ulEl.appendChild (liEl);
-sectionEl.appendChild(ulEl)
 
-liEl = document.createElement('li');
-liEl.textContent = "Total cups sold at Pike Place Market: " + this.totalCupSales;   //' Employee needed :' + this.employeeRequired;
-ulEl.appendChild (liEl);
-sectionEl.appendChild(ulEl)
 
-liEl = document.createElement('li');
-liEl.textContent = 'Total to-go pound packages sold at Pike Place Market: ' + this.hrlyPound
-ulEl.appendChild (liEl);
-sectionEl.appendChild(ulEl)
 
-liEl = document.createElement('li');
-liEl.textContent = 'Total pounds of beans needed at Pike Place Market: ' + this.dailyPoundSale
-ulEl.appendChild (liEl);
-sectionEl.appendChild(ulEl)
+function renderTableTopRow(id) {
+  var table = document.getElementById(id);
+  var row = document.createElement('tr');
 
-}
-}
-pikePlace.render();
+  var thEl = document.createElement('td');
+  thEl.textContent = (' ');
+  row.appendChild(thEl);
 
-var capitolHillSales = {
-  hrsOpen: ["6 am", "7 am", "8 am","9 am","10 am", "11 am", "12 pm", "1 pm", "2 pm", "3 pm", "4 pm", "5 pm", "6 pm", "7 pm", "8 pm"],
-  name: "Capitol Hill",
-  min:14,
-  max:35,
-  average:1.2,
-  toGoPound: .34,
+  var thEl = document.createElement('td');
+  thEl.textContent = ('Total');
+  row.appendChild(thEl);
 
-  totalCupSales: 0,
-  totalCustomers:0,
-  hrlyPound:0,
-  dailyPoundSale:0,
-
-  cupSalePerHr:[],
-  hourlyCust: [],
-  packageLbsPerHour:[],
-  employeeRequired:[],
-  totalPoundsPerHr:[],
-  cupsPerPound:[],
-
-  // This generates a random number of customers between min and max
-
-  getRandom: function(min, max) {
-  return(Math.floor(Math.random() * (max - min + 1)) + min);
-},
-// This calculates average customers per hour
-  averageCustomerPerHour: function () {
-    for (cust in this.hrsOpen)     {
-      var myCustomers= Math.round(this.getRandom(this.min, this.max)*10)/10;
-      this.hourlyCust.push (myCustomers);
-
-      this.totalCustomers+= this.hourlyCust[cust];
+  for(hour in hrsOpen) {
+    var thEl = document.createElement('td');
+    thEl.textContent = hrsOpen[hour];
+    row.appendChild(thEl);
   }
-},
-// This calculates coffee cupSalePerHr per hours
-hourlySales: function () {
-  for (hour in this.hourlyCust)    /* same as (i=0; i < this.hrsOpen.length; i++)*/ {
-  var cupSalePerHr=Math.round((this.hourlyCust[hour] * this.average)*10)/10;
-  //console.log (cupSalePerHr);
-  this.cupSalePerHr.push(cupSalePerHr);
-  this.totalCupSales+= this.cupSalePerHr[hour]; /*same as (this.totalCupSales +=this.cupSalePerHr[i];) */
 
-  // this calculates  total pounds in terms of cups
-  var cupsInPounds = Math.round((this.cupSalePerHr[hour]/16)*10)/10;
-  this.cupsPerPound.push (cupsInPounds);
+  table.appendChild(row);
+}
 
-  // this calculates to Go Pound sale per hour
-  packageLbsPerHour = Math.round((this.hourlyCust[hour] * this.toGoPound) * 10)/10;
-  this.packageLbsPerHour.push(packageLbsPerHour); ///  there is some bug in these lines
-  this.hrlyPound+=packageLbsPerHour;
+
+function renderTableSecondrow(obj) {
+
+  var table = document.getElementById('tab');
+
+  var row = document.createElement('tr');
+  var thEl = document.createElement('td');
+  thEl.textContent = obj.name;
+  row.appendChild(thEl);
+
+  var thEl = document.createElement('td');
+  thEl.textContent = obj.dailyPoundSale;
+  row.appendChild(thEl);
+
+  for(hour in obj.totalPoundsPerHr) {
+    var thEl = document.createElement('td');
+    thEl.textContent = obj.totalPoundsPerHr[hour];
+    row.appendChild(thEl);
   }
-  this.totalCupSales = Math.round(this.totalCupSales);
-},
-//this calculates Total Coffee Pound sale per hour
-getTotalPoundSalePerHour: function () {
-  for (hour in this.hrsOpen) {
-    var totalHrlyPounds = Math.round (Math.round ((this.packageLbsPerHour[hour] + this.cupsPerPound [hour])*10)/10*10)/10;
-    this.totalPoundsPerHr.push (totalHrlyPounds);   ///  there is some bug in these lines
-    this.dailyPoundSale+=totalHrlyPounds;
+    table.appendChild(row);
+}
+
+function renderTotalRow(obj) {
+
+  var table = document.getElementById('tab');
+  var row = document.createElement('tr');
+  var thEl = document.createElement('td');
+  thEl.textContent = ('Totals');
+  row.appendChild(thEl);
+
+  var thEl = document.createElement('td');
+  thEl.textContent = allShopsDailyLbs;
+  row.appendChild(thEl);
+  table.appendChild(row);
+    for(hour in allShopsHourlyLbs) {
+      var thEl = document.createElement('td');
+      thEl.textContent = allShopsHourlyLbs[hour];
+      row.appendChild(thEl);
   }
-   this.dailyPoundSale = Math.round(this.dailyPoundSale)
-},
-
-getEmployeesPerHour:  function() {
-    for (idx in this.hrsOpen) {
-      var employees = Math.ceil(this.hourlyCust[idx] / 30);
-      this.employeeRequired.push(employees);
-    }
-  },
-
-//This prints the lists to the page
-render: function () {
-  this.averageCustomerPerHour ();
-  this.hourlySales ();
-  this.getTotalPoundSalePerHour ();
-  this.getEmployeesPerHour ();
-  var sectionEl = document.getElementById('capitolHillSales');
-  sectionEl.textContent = this.name;
-  var ulEl = document.createElement ('ul');
-
-// this creates li for each this.hrsOpen and appends it to the ul we created above
-for (hour in this.hrsOpen) {
-  var liEl = document.createElement ('li');
-  liEl.textContent = this.hrsOpen [hour] + ": " + this.totalPoundsPerHr [hour] + ' lbs [' + this.hourlyCust [hour] + ' customers, ' + this.cupSalePerHr[hour] +
-  ' cups'+ " ( " + this.cupsPerPound [hour] + " lbs), " + this.packageLbsPerHour [hour] +  " lbs to-go]";
-  ulEl.appendChild (liEl);
+      console.log(row);
+      table.appendChild(row);
 }
-// this creates and li for totalCupSales and appends it to the ul created above
-//then appends it to the existing section withing our HTML.
-liEl = document.createElement('li');
-liEl.textContent = 'Total customers at Capitol Hill Market: ' + this.totalCustomers
-ulEl.appendChild (liEl);
-sectionEl.appendChild(ulEl)
 
-liEl = document.createElement('li');
-liEl.textContent = "Total cups sold at Capitol Hill Market: " + this.totalCupSales;   //' Employee needed :' + this.employeeRequired;
-ulEl.appendChild (liEl);
-sectionEl.appendChild(ulEl)
-
-liEl = document.createElement('li');
-liEl.textContent = 'Total to-go pound packages sold at Capitol Hill Market: ' + this.hrlyPound
-ulEl.appendChild (liEl);
-sectionEl.appendChild(ulEl)
-
-liEl = document.createElement('li');
-liEl.textContent = 'Total pounds of beans needed at Capitol Hill Market: ' + this.dailyPoundSale
-ulEl.appendChild (liEl);
-sectionEl.appendChild(ulEl)
-
+function displayCoffeeTable () {
+createTableTitle('Beans Needed By Location Each Day', 'tableEl');
+renderTableTopRow('tab');
+renderTableSecondrow(pikePlace);
+renderTableSecondrow(capitolHill);
+renderTableSecondrow(seattlePublicLibrary);
+renderTableSecondrow(southLakeUnion);
+renderTableSecondrow(seaTacAirport);
+renderTotalRow ();
 }
-}
-capitolHillSales.render();
 
-/////////////////////
+displayCoffeeTable ();
+
+///////////
 
 
-var seattlePublicLibrarySales = {
-  hrsOpen: ["6 am", "7 am", "8 am","9 am","10 am", "11 am", "12 pm", "1 pm", "2 pm", "3 pm", "4 pm", "5 pm", "6 pm", "7 pm", "8 pm"],
-  name: "Seattle Public Library",
-  min:14,
-  max:35,
-  average:1.2,
-  toGoPound: .34,
 
-  totalCupSales: 0,
-  totalCustomers:0,
-  hrlyPound:0,
-  dailyPoundSale:0,
+function renderTableSecondrowBarista(obj) {
 
-  cupSalePerHr:[],
-  hourlyCust: [],
-  packageLbsPerHour:[],
-  employeeRequired:[],
-  totalPoundsPerHr:[],
-  cupsPerPound:[],
+  var table = document.getElementById('barista');
 
-  // This generates a random number of customers between min and max
+  var row = document.createElement('tr');
+  var thEl = document.createElement('td');
+  thEl.textContent = obj.name;
+  row.appendChild(thEl);
+  table.appendChild(row);
+  var thEl = document.createElement('td');
+  thEl.textContent = obj.dailyEmployeePerShop;
+  row.appendChild(thEl);
 
-  getRandom: function(min, max) {
-  return(Math.floor(Math.random() * (max - min + 1)) + min);
-},
-// This calculates average customers per hour
-  averageCustomerPerHour: function () {
-    for (cust in this.hrsOpen)     {
-      var myCustomers= Math.round(this.getRandom(this.min, this.max)*10)/10;
-      this.hourlyCust.push (myCustomers);
-
-      this.totalCustomers+= this.hourlyCust[cust];
+  for(hour in obj.employeeRequired) {
+    var thEl = document.createElement('td');
+    thEl.textContent = obj.employeeRequired[hour];
+    row.appendChild(thEl);
   }
-},
-// This calculates coffee cupSalePerHr per hours
-hourlySales: function () {
-  for (hour in this.hourlyCust)    /* same as (i=0; i < this.hrsOpen.length; i++)*/ {
-  var cupSalePerHr=Math.round((this.hourlyCust[hour] * this.average)*10)/10;
-  //console.log (cupSalePerHr);
-  this.cupSalePerHr.push(cupSalePerHr);
-  this.totalCupSales+= this.cupSalePerHr[hour]; /*same as (this.totalCupSales +=this.cupSalePerHr[i];) */
+    table.appendChild(row);
+}
 
-  // this calculates  total pounds in terms of cups
-  var cupsInPounds = Math.round((this.cupSalePerHr[hour]/16)*10)/10;
-  this.cupsPerPound.push (cupsInPounds);
+function renderTotalRowBarista(obj) {
 
-  // this calculates to Go Pound sale per hour
-  packageLbsPerHour = Math.round((this.hourlyCust[hour] * this.toGoPound) * 10)/10;
-  this.packageLbsPerHour.push(packageLbsPerHour); ///  there is some bug in these lines
-  this.hrlyPound+=packageLbsPerHour;
+  var table = document.getElementById('barista');
+  var row = document.createElement('tr');
+  var thEl = document.createElement('td');
+  thEl.textContent = ('Totals');
+  row.appendChild(thEl);
+
+  var thEl = document.createElement('td');
+  thEl.textContent = allShopsDailyEmployee;
+  row.appendChild(thEl);
+  table.appendChild(row);
+    for(hour in allShopsHourlyEmploy) {
+      var thEl = document.createElement('td');
+      thEl.textContent = allShopsHourlyEmploy[hour];
+      row.appendChild(thEl);
   }
-  this.totalCupSales = Math.round(this.totalCupSales);
-},
-//this calculates Total Coffee Pound sale per hour
-getTotalPoundSalePerHour: function () {
-  for (hour in this.hrsOpen) {
-    var totalHrlyPounds = Math.round ((this.packageLbsPerHour[hour] + this.cupsPerPound [hour])*10)/10;
-    this.totalPoundsPerHr.push (totalHrlyPounds);   ///  there is some bug in these lines
-    this.dailyPoundSale+=totalHrlyPounds;
-  }
-   this.dailyPoundSale = Math.round(this.dailyPoundSale)
-},
-
-getEmployeesPerHour:  function() {
-    for (idx in this.hrsOpen) {
-      var employees = Math.ceil(this.hourlyCust[idx] / 30);
-      this.employeeRequired.push(employees);
-    }
-  },
-
-//This prints the lists to the page
-render: function () {
-  this.averageCustomerPerHour ();
-  this.hourlySales ();
-  this.getTotalPoundSalePerHour ();
-  this.getEmployeesPerHour ();
-  var sectionEl = document.getElementById('seattlePublicLibrarySales');
-  sectionEl.textContent = this.name;
-  var ulEl = document.createElement ('ul');
-
-// this creates li for each this.hrsOpen and appends it to the ul we created above
-for (hour in this.hrsOpen) {
-  var liEl = document.createElement ('li');
-  liEl.textContent = this.hrsOpen [hour] + ": " + this.totalPoundsPerHr [hour] + ' lbs [' + this.hourlyCust [hour] + ' customers, ' + this.cupSalePerHr[hour] +
-  ' cups'+ " ( " + this.cupsPerPound [hour] + " lbs), " + this.packageLbsPerHour [hour] +  " lbs to-go]";
-  ulEl.appendChild (liEl);
+      console.log(row);
+      table.appendChild(row);
 }
-// this creates and li for totalCupSales and appends it to the ul created above
-//then appends it to the existing section withing our HTML.
-liEl = document.createElement('li');
-liEl.textContent = 'Total customers at Seattle Public Library Market: ' + this.totalCustomers
-ulEl.appendChild (liEl);
-sectionEl.appendChild(ulEl)
 
-liEl = document.createElement('li');
-liEl.textContent = "Total cups sold at Seattle Public Library Market: " + this.totalCupSales;   //' Employee needed :' + this.employeeRequired;
-ulEl.appendChild (liEl);
-sectionEl.appendChild(ulEl)
-
-liEl = document.createElement('li');
-liEl.textContent = 'Total to-go pound packages sold at Seattle Public Library Market: ' + this.hrlyPound
-ulEl.appendChild (liEl);
-sectionEl.appendChild(ulEl)
-
-liEl = document.createElement('li');
-liEl.textContent = 'Total pounds of beans needed at Seattle Public Library Market: ' + this.dailyPoundSale
-ulEl.appendChild (liEl);
-sectionEl.appendChild(ulEl)
-
-}
-}
-seattlePublicLibrarySales.render();
-/////////////////
-
-var southLakeUnionSales = {
-  hrsOpen: ["6 am", "7 am", "8 am","9 am","10 am", "11 am", "12 pm", "1 pm", "2 pm", "3 pm", "4 pm", "5 pm", "6 pm", "7 pm", "8 pm"],
-  name: "South Lake Union",
-  min:14,
-  max:35,
-  average:1.2,
-  toGoPound: .34,
-
-  totalCupSales: 0,
-  totalCustomers:0,
-  hrlyPound:0,
-  dailyPoundSale:0,
-
-  cupSalePerHr:[],
-  hourlyCust: [],
-  packageLbsPerHour:[],
-  employeeRequired:[],
-  totalPoundsPerHr:[],
-  cupsPerPound:[],
-
-  // This generates a random number of customers between min and max
-
-  getRandom: function(min, max) {
-  return(Math.floor(Math.random() * (max - min + 1)) + min);
-},
-// This calculates average customers per hour
-  averageCustomerPerHour: function () {
-    for (cust in this.hrsOpen)     {
-      var myCustomers= Math.round(this.getRandom(this.min, this.max)*10)/10;
-      this.hourlyCust.push (myCustomers);
-
-      this.totalCustomers+= this.hourlyCust[cust];
-  }
-},
-// This calculates coffee cupSalePerHr per hours
-hourlySales: function () {
-  for (hour in this.hourlyCust)    /* same as (i=0; i < this.hrsOpen.length; i++)*/ {
-  var cupSalePerHr=Math.round((this.hourlyCust[hour] * this.average)*10)/10;
-  //console.log (cupSalePerHr);
-  this.cupSalePerHr.push(cupSalePerHr);
-  this.totalCupSales+= this.cupSalePerHr[hour]; /*same as (this.totalCupSales +=this.cupSalePerHr[i];) */
-
-  // this calculates  total pounds in terms of cups
-  var cupsInPounds = Math.round((this.cupSalePerHr[hour]/16)*10)/10;
-  this.cupsPerPound.push (cupsInPounds);
-
-  // this calculates to Go Pound sale per hour
-  packageLbsPerHour = Math.round((this.hourlyCust[hour] * this.toGoPound) * 10)/10;
-  this.packageLbsPerHour.push(packageLbsPerHour); ///  there is some bug in these lines
-  this.hrlyPound+=packageLbsPerHour;
-  }
-  this.totalCupSales = Math.round(this.totalCupSales);
-},
-//this calculates Total Coffee Pound sale per hour
-getTotalPoundSalePerHour: function () {
-  for (hour in this.hrsOpen) {
-    var totalHrlyPounds = Math.round ((this.packageLbsPerHour[hour] + this.cupsPerPound [hour])*10)/10;
-    this.totalPoundsPerHr.push (totalHrlyPounds);   ///  there is some bug in these lines
-    this.dailyPoundSale+=totalHrlyPounds;
-  }
-   this.dailyPoundSale = Math.round(this.dailyPoundSale)
-},
-
-getEmployeesPerHour:  function() {
-    for (idx in this.hrsOpen) {
-      var employees = Math.ceil(this.hourlyCust[idx] / 30);
-      this.employeeRequired.push(employees);
-    }
-  },
-
-//This prints the lists to the page
-render: function () {
-  this.averageCustomerPerHour ();
-  this.hourlySales ();
-  this.getTotalPoundSalePerHour ();
-  this.getEmployeesPerHour ();
-  var sectionEl = document.getElementById('southLakeUnionSales');
-  sectionEl.textContent = this.name;
-  var ulEl = document.createElement ('ul');
-
-// this creates li for each this.hrsOpen and appends it to the ul we created above
-for (hour in this.hrsOpen) {
-  var liEl = document.createElement ('li');
-  liEl.textContent = this.hrsOpen [hour] + ": " + this.totalPoundsPerHr [hour] + ' lbs [' + this.hourlyCust [hour] + ' customers, ' + this.cupSalePerHr[hour] +
-  ' cups'+ " ( " + this.cupsPerPound [hour] + " lbs), " + this.packageLbsPerHour [hour] +  " lbs to-go]";
-  ulEl.appendChild (liEl);
-}
-// this creates and li for totalCupSales and appends it to the ul created above
-//then appends it to the existing section withing our HTML.
-liEl = document.createElement('li');
-liEl.textContent = 'Total customers at South Lake Union Market Sales: ' + this.totalCustomers
-ulEl.appendChild (liEl);
-sectionEl.appendChild(ulEl)
-
-liEl = document.createElement('li');
-liEl.textContent = "Total cups sold at South Lake Union Market Sales: " + this.totalCupSales;   //' Employee needed :' + this.employeeRequired;
-ulEl.appendChild (liEl);
-sectionEl.appendChild(ulEl)
-
-liEl = document.createElement('li');
-liEl.textContent = 'Total to-go pound packages sold at South Lake Union Market Sales: ' + this.hrlyPound
-ulEl.appendChild (liEl);
-sectionEl.appendChild(ulEl)
-
-liEl = document.createElement('li');
-liEl.textContent = 'Total pounds of beans needed at South Lake Union Market Sales: ' + this.dailyPoundSale
-ulEl.appendChild (liEl);
-sectionEl.appendChild(ulEl)
-
-}
-}
-southLakeUnionSales.render();
-
-var seaTacAirportSales = {
-  hrsOpen: ["6 am", "7 am", "8 am","9 am","10 am", "11 am", "12 pm", "1 pm", "2 pm", "3 pm", "4 pm", "5 pm", "6 pm", "7 pm", "8 pm"],
-  name: "SeaTac Airport",
-  min:14,
-  max:35,
-  average:1.2,
-  toGoPound: .34,
-
-  totalCupSales: 0,
-  totalCustomers:0,
-  hrlyPound:0,
-  dailyPoundSale:0,
-
-  cupSalePerHr:[],
-  hourlyCust: [],
-  packageLbsPerHour:[],
-  employeeRequired:[],
-  totalPoundsPerHr:[],
-  cupsPerPound:[],
-
-  // This generates a random number of customers between min and max
-
-  getRandom: function(min, max) {
-  return(Math.floor(Math.random() * (max - min + 1)) + min);
-},
-// This calculates average customers per hour
-  averageCustomerPerHour: function () {
-    for (cust in this.hrsOpen)     {
-      var myCustomers= Math.round(this.getRandom(this.min, this.max)*10)/10;
-      this.hourlyCust.push (myCustomers);
-
-      this.totalCustomers+= this.hourlyCust[cust];
-  }
-},
-// This calculates coffee cupSalePerHr per hours
-hourlySales: function () {
-  for (hour in this.hourlyCust)    /* same as (i=0; i < this.hrsOpen.length; i++)*/ {
-  var cupSalePerHr=Math.round((this.hourlyCust[hour] * this.average)*10)/10;
-  //console.log (cupSalePerHr);
-  this.cupSalePerHr.push(cupSalePerHr);
-  this.totalCupSales+= this.cupSalePerHr[hour]; /*same as (this.totalCupSales +=this.cupSalePerHr[i];) */
-
-  // this calculates  total pounds in terms of cups
-  var cupsInPounds = Math.round((this.cupSalePerHr[hour]/16)*10)/10;
-  this.cupsPerPound.push (cupsInPounds);
-
-  // this calculates to Go Pound sale per hour
-  packageLbsPerHour = Math.round((this.hourlyCust[hour] * this.toGoPound) * 10)/10;
-  this.packageLbsPerHour.push(packageLbsPerHour); ///  there is some bug in these lines
-  this.hrlyPound+=packageLbsPerHour;
-  }
-  this.totalCupSales = Math.round(this.totalCupSales);
-},
-//this calculates Total Coffee Pound sale per hour
-getTotalPoundSalePerHour: function () {
-  for (hour in this.hrsOpen) {
-    var totalHrlyPounds = Math.round ((this.packageLbsPerHour[hour] + this.cupsPerPound [hour])*10)/10;
-    this.totalPoundsPerHr.push (totalHrlyPounds);   ///  there is some bug in these lines
-    this.dailyPoundSale+=totalHrlyPounds;
-  }
-   this.dailyPoundSale = Math.round(this.dailyPoundSale)
-},
-
-getEmployeesPerHour:  function() {
-    for (idx in this.hrsOpen) {
-      var employees = Math.ceil(this.hourlyCust[idx] / 30);
-      this.employeeRequired.push(employees);
-    }
-  },
-
-//This prints the lists to the page
-render: function () {
-  this.averageCustomerPerHour ();
-  this.hourlySales ();
-  this.getTotalPoundSalePerHour ();
-  this.getEmployeesPerHour ();
-  var sectionEl = document.getElementById('seaTacAirportSales');
-  sectionEl.textContent = this.name;
-  var ulEl = document.createElement ('ul');
-
-// this creates li for each this.hrsOpen and appends it to the ul we created above
-for (hour in this.hrsOpen) {
-  var liEl = document.createElement ('li');
-  liEl.textContent = this.hrsOpen [hour] + ": " + this.totalPoundsPerHr [hour] + ' lbs [' + this.hourlyCust [hour] + ' customers, ' + this.cupSalePerHr[hour] +
-  ' cups'+ " ( " + this.cupsPerPound [hour] + " lbs), " + this.packageLbsPerHour [hour] +  " lbs to-go]";
-  ulEl.appendChild (liEl);
-}
-// this creates and li for totalCupSales and appends it to the ul created above
-//then appends it to the existing section withing our HTML.
-liEl = document.createElement('li');
-liEl.textContent = 'Total customers at SeaTac Airport Market Sales: ' + this.totalCustomers
-ulEl.appendChild (liEl);
-sectionEl.appendChild(ulEl)
-
-liEl = document.createElement('li');
-liEl.textContent = "Total cups sold at SeaTac Airport Market Sales: " + this.totalCupSales;   //' Employee needed :' + this.employeeRequired;
-ulEl.appendChild (liEl);
-sectionEl.appendChild(ulEl)
-
-liEl = document.createElement('li');
-liEl.textContent = 'Total to-go pound packages sold at SeaTac Airport Market Sales: ' + this.hrlyPound
-ulEl.appendChild (liEl);
-sectionEl.appendChild(ulEl)
-
-liEl = document.createElement('li');
-liEl.textContent = 'Total pounds of beans needed at SeaTac Airport Market Sales: ' + this.dailyPoundSale
-ulEl.appendChild (liEl);
-sectionEl.appendChild(ulEl)
-
-}
-}
-seaTacAirportSales.render();
+createTableTitle('Baristas Needed By Location Each Day', 'tableEl1');
+renderTableTopRow('barista')
+renderTableSecondrowBarista (pikePlace)
+renderTableSecondrowBarista (capitolHill)
+renderTableSecondrowBarista (seattlePublicLibrary)
+renderTableSecondrowBarista (southLakeUnion)
+renderTableSecondrowBarista (seaTacAirport)
+renderTotalRowBarista();
