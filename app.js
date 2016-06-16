@@ -78,6 +78,7 @@ Shop.prototype.getEmployeesPerHour = function() {
     this.dailyEmployeePerShop+=hourlyEmployees;
     allShopsHourlyEmploy[hour]+=hourlyEmployees;
     allShopsDailyEmployee+=hourlyEmployees;
+    console.log (allShopsDailyEmployee)
     }
   };
 
@@ -102,9 +103,10 @@ var seaTacAirport = new Shop (28, 44, 'Sea-Tac Airport', 1.1, .41);
 
 //////////////////////////////
 // create h1 tag for a table  main
-var center = document.getElementById('tableEl');
 
-function createTableTitle(toppart) {
+
+function createTableTitle(toppart, id) {
+  var center = document.getElementById(id);
   var trHeader = document.createElement('h1');
   trHeader.textContent = toppart;
   center.appendChild(trHeader);
@@ -112,8 +114,8 @@ function createTableTitle(toppart) {
 
 
 
-function renderTableTopRow() {
-  var table = document.getElementById('tab');
+function renderTableTopRow(id) {
+  var table = document.getElementById(id);
   var row = document.createElement('tr');
 
   var thEl = document.createElement('td');
@@ -176,41 +178,70 @@ function renderTotalRow(obj) {
       table.appendChild(row);
 }
 
-
-createTableTitle('Beans Needed By Location Each Day');
-renderTableTopRow();
+function displayCoffeeTable () {
+createTableTitle('Beans Needed By Location Each Day', 'tableEl');
+renderTableTopRow('tab');
 renderTableSecondrow(pikePlace);
 renderTableSecondrow(capitolHill);
 renderTableSecondrow(seattlePublicLibrary);
 renderTableSecondrow(southLakeUnion);
 renderTableSecondrow(seaTacAirport);
 renderTotalRow ();
+}
+
+displayCoffeeTable ();
+
+///////////
 
 
-//
-//   var thTotals = document.createElement('th');
-//   thTotals.textContent = 'Totals';
-//   trHeader.appendChild(thTotals);
-//   tableEl.appendChild(trHeader);
-//
-//   for (idx in shops) {
-//     shops[idx].hourlySales();
-//
-//     var trStoreEl = document.createElement('tr');
-//     var thStoreEl = document.createElement('th');
-//     thStoreEl.textContent = allShops[idx].name;
-//     trStoreEl.appendChild(thStoreEl);
-//
-//     for (hour in hours) {
-//       var tdSalesEl = document.createElement('td');
-//       tdSalesEl.textContent = allShops[idx].cupSalePerHr[hour];
-//       trStoreEl.appendChild(tdSalesEl);
-//     }
-//
-//     var tdTotalSalesEl = document.createElement('td');
-//     tdTotalSalesEl.textContent = allShops[idx].totalCupSales;
-//     trStoreEl.appendChild(tdTotalSalesEl);
-//     tableEl.appendChild(trStoreEl);
-//   };
-// };
-// renderTable();
+
+function renderTableSecondrowBarista(obj) {
+
+  var table = document.getElementById('barista');
+
+  var row = document.createElement('tr');
+  var thEl = document.createElement('td');
+  thEl.textContent = obj.name;
+  row.appendChild(thEl);
+  table.appendChild(row);
+  var thEl = document.createElement('td');
+  thEl.textContent = obj.dailyEmployeePerShop;
+  row.appendChild(thEl);
+
+  for(hour in obj.employeeRequired) {
+    var thEl = document.createElement('td');
+    thEl.textContent = obj.employeeRequired[hour];
+    row.appendChild(thEl);
+  }
+    table.appendChild(row);
+}
+
+function renderTotalRowBarista(obj) {
+
+  var table = document.getElementById('barista');
+  var row = document.createElement('tr');
+  var thEl = document.createElement('td');
+  thEl.textContent = ('Totals');
+  row.appendChild(thEl);
+
+  var thEl = document.createElement('td');
+  thEl.textContent = allShopsDailyEmployee;
+  row.appendChild(thEl);
+  table.appendChild(row);
+    for(hour in allShopsHourlyEmploy) {
+      var thEl = document.createElement('td');
+      thEl.textContent = allShopsHourlyEmploy[hour];
+      row.appendChild(thEl);
+  }
+      console.log(row);
+      table.appendChild(row);
+}
+
+createTableTitle('Baristas Needed By Location Each Day', 'tableEl1');
+renderTableTopRow('barista')
+renderTableSecondrowBarista (pikePlace)
+renderTableSecondrowBarista (capitolHill)
+renderTableSecondrowBarista (seattlePublicLibrary)
+renderTableSecondrowBarista (southLakeUnion)
+renderTableSecondrowBarista (seaTacAirport)
+renderTotalRowBarista();
