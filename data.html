@@ -2,21 +2,41 @@
 <html>
   <head>
     <link rel="stylesheet" href="style.css" >
-
-
-
     <meta charset="utf-8">
     <title>CampFire Coffee</title>
   </head>
   <body>
-    <p id='tableEl'></p>
+    <form id='form'>
+        <fieldset>
+          <legend>Add a Shop</legend>
+
+          <label for="shopName">Location: <input type="text" name="shopName" required></label>
+            </br>
+            <label for="minCust">Minumum Customers: <input type="number" name="minCust" maxlength='3'
+            min=0 required></label>
+          <label for="maxCust">Maximum Customers: <input type="number" name="maxCust" maxlength='3'
+            min=0 required></label>
+          </br>
+
+          <label for="cupsPer">Average Cups Per Customer <input type="number" name="cupsPer" maxlength='5' min=0 step='0.1' required></label>
+          <label for="lbsPer">Average Pounds Per Customer <input type="number" name="lbsPer" maxlength='5' min=0 step='0.01' required></label>
+            </br>
+          <div>
+            &nbsp
+          </div>
+          <input id='makeShop' type="submit" name="submit" value="Add">
+        </fieldset>
+    </form>
+    <section id='tbdata'>
+      <p id='tableEl'></p>
 
 
-    <table id='tab'>
+      <table id='tab'>
 
-    </table>
-    <p id='tableEl1'></p>
-    <table id='barista'></table>
+      </table>
+      <p id='tableEl1'></p>
+      <table id='barista'></table>
+</section>
 
 
 
