@@ -5,15 +5,12 @@ var allShopsHourlyLbs = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 var allShopsHourlyEmploy = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 var allShopsDailyEmployee = 0;
 
-
-
 function Shop (min, max, name,average,toGoPound) {
  this.min = min;
  this.max = max;
  this.name = name;
  this.average = average;
  this.toGoPound = toGoPound;
- //this.hours = hours;
  this.totalCupSales = 0;
  this.totalCustomers = 0;
  this.hrlyPound = 0;
@@ -78,7 +75,6 @@ Shop.prototype.getEmployeesPerHour = function() {
     this.dailyEmployeePerShop+=hourlyEmployees;
     allShopsHourlyEmploy[hour]+=hourlyEmployees;
     allShopsDailyEmployee+=hourlyEmployees;
-    console.log (allShopsDailyEmployee)
     }
   };
 
@@ -104,15 +100,12 @@ var seaTacAirport = new Shop (28, 44, 'Sea-Tac Airport', 1.1, .41);
 //////////////////////////////
 // create h1 tag for a table  main
 
-
 function createTableTitle(toppart, id) {
   var center = document.getElementById(id);
   var trHeader = document.createElement('h1');
   trHeader.textContent = toppart;
   center.appendChild(trHeader);
 }
-
-
 
 function renderTableTopRow(id) {
   var table = document.getElementById(id);
@@ -134,7 +127,6 @@ function renderTableTopRow(id) {
 
   table.appendChild(row);
 }
-
 
 function renderTableSecondrow(obj) {
 
@@ -174,26 +166,22 @@ function renderTotalRow(obj) {
       thEl.textContent = allShopsHourlyLbs[hour];
       row.appendChild(thEl);
   }
-      console.log(row);
+    //  console.log(row);
       table.appendChild(row);
 }
 
 function displayCoffeeTable () {
-createTableTitle('Beans Needed By Location Each Day', 'tableEl');
+
 renderTableTopRow('tab');
-renderTableSecondrow(pikePlace);
-renderTableSecondrow(capitolHill);
-renderTableSecondrow(seattlePublicLibrary);
-renderTableSecondrow(southLakeUnion);
-renderTableSecondrow(seaTacAirport);
+for (var i = 0; i < allShops.length; i++) {
+  renderTableSecondrow (allShops[i])
+}
 renderTotalRow ();
 }
-
+createTableTitle('Beans Needed By Location Each Day', 'tableEl');
 displayCoffeeTable ();
 
 ///////////
-
-
 
 function renderTableSecondrowBarista(obj) {
 
@@ -236,12 +224,55 @@ function renderTotalRowBarista(obj) {
       console.log(row);
       table.appendChild(row);
 }
-
+function displayBaristaTable () {
+  renderTableTopRow('barista')
+  for (var i = 0; i < allShops.length; i++) {
+    renderTableSecondrowBarista (allShops[i])
+  }
+  renderTotalRowBarista();
+}
 createTableTitle('Baristas Needed By Location Each Day', 'tableEl1');
-renderTableTopRow('barista')
-renderTableSecondrowBarista (pikePlace)
-renderTableSecondrowBarista (capitolHill)
-renderTableSecondrowBarista (seattlePublicLibrary)
-renderTableSecondrowBarista (southLakeUnion)
-renderTableSecondrowBarista (seaTacAirport)
-renderTotalRowBarista();
+
+displayBaristaTable ();
+
+
+function clearSubmissionFields () {
+  event.target.shopName.value = '';
+  event.target.minCust.value = null;
+  event.target.maxCust.value = null;
+  event.target.cupsPer.value = null;
+  event.target.lbsPer.value = null;
+}
+
+  function clearTableInfo() {
+    var beansTable = document.getElementById('tab');
+    var baristaTable = document.getElementById('barista');
+    beansTable.innerHTML = '';
+    baristaTable.innerHTML = '';
+  }
+
+
+function createShop(event) {
+  event.preventDefault();
+ console.log (event)
+
+  // convert number inputs to floats
+  var minCust = parseInt(event.target.minCust.value);
+  var maxCust = parseInt(event.target.maxCust.value);
+  var shopName = event.target.shopName.value;
+  var cupsPer = parseFloat(event.target.cupsPer.value);
+  var lbsPer = parseFloat(event.target.lbsPer.value);
+// instantiate a new object
+var newLocation = new Shop (minCust, maxCust,shopName,cupsPer,lbsPer);
+
+newLocation.doAllTheMethods();
+
+clearTableInfo();
+displayBaristaTable();
+displayCoffeeTable();
+
+clearSubmissionFields ();
+}
+
+var newShop = document.getElementById ('form');
+newShop.addEventListener('submit',createShop);
