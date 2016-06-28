@@ -1,0 +1,50 @@
+body {
+  background-color: #009999
+}
+
+#text {
+  font-size: 20px;
+  font-family: serif;
+
+}
+td {
+  border: 2px solid black;
+}
+
+th{
+  width: 900px;
+  padding: 30px;
+  margin: 40px;
+}
+.boxes {
+  border: 1px solid black;
+  align-items:left;
+}
+
+#child {
+  background-color:#993300;
+  width: 17px;
+  height: 17px;
+}
+
+#buttonchild {
+  background-color:#ff9999;
+  width: 20px;
+  height: 20px;
+}
+#hover {
+  background-color:#FF00FF;
+  width: 20px;
+  height: 20px;
+}
+#hroper {
+  background-color:#ff0000;
+  width: 20px;
+  height: 20px;
+}
+
+.parent {
+display: flex;
+flex-direction: row;
+text-align: left;
+}

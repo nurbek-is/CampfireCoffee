@@ -1,7 +1,29 @@
 td {
   border: 2px solid black;
 }
+
 input {
 margin: 3px;
 padding: 6px;
+border-radius: 10px;
+background-color: #ffcc66;
+}
+#makeShop{
+  background-color: #ff33cc;
+}
+
+fieldset {
+  background-color: #ccff33;
+}
+
+td:hover {
+    background-color: #0000FF;
+    color: white;
+  }
+#tab {
+  background-color: #b38600;
+}
+
+#barista {
+  background-color: #00b33c;
 }
